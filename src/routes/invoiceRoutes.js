@@ -1,112 +1,28 @@
 const express = require("express");
-const Invoice = require("../models/invoice");
 const authenticateToken = require("../middlewares/authorization");
+const {
+  addInvoice,
+  getAllInvoices,
+  getInvoiceById,
+  updateInvoice,
+  deleteInvoice,
+} = require("../controllers/invoiceControllers");
+
+// const {
+//   addInvoice,
+//   getAllInvoices,
+//   getInvoiceById,
+//   updateInvoice,
+//   deleteInvoice,
+// } = require("../controllers-mongoose/invoiceControllers");
 
 const router = express.Router();
 
-// TO-DO: Move callbacks to controller file
-
-// CREATE
-router.post("/addinvoice", authenticateToken, async (req, res) => {
-  const {
-    clientName,
-    amount,
-    service,
-    paymentMethod,
-    invoiceDate,
-    isPaid = false,
-  } = req.body;
-
-  const invoice = new Invoice(
-    null,
-    clientName,
-    amount,
-    service,
-    paymentMethod,
-    invoiceDate,
-    isPaid
-  );
-
-  try {
-    await invoice.create();
-    res.status(201).send("Invoice added successfully");
-  } catch (error) {
-    console.error("Failed to add invoice: ", error);
-    res.status(500).send("Failed to add invoice");
-  }
-});
-
-// RETRIEVE ALL
-router.get("/invoices", authenticateToken, async (req, res) => {
-  try {
-    const invoices = await Invoice.fetchAll();
-    res.status(200).send(invoices);
-  } catch (error) {
-    console.error("Failed to fetch invoices: ", error);
-    res.status(404).send("Failed to fetch invoices");
-  }
-});
-
-// RETRIEVE ONE
-router.get("/invoices/:id", authenticateToken, async (req, res) => {
-  const invoiceId = req.params.id;
-  try {
-    const invoice = await Invoice.findById(invoiceId);
-    if (!invoice) {
-      return res
-        .status(404)
-        .send("The invoice with the given ID was not found.");
-    }
-    res.status(200).send(invoice);
-  } catch (error) {
-    console.error("Failed to fetch invoice: ", error);
-    res.status(404).send("Failed to fetch invoice");
-  }
-});
-
-// UPDATE
-router.put("/invoices/:id", authenticateToken, async (req, res) => {
-  const invoiceId = req.params.id;
-  const { clientName, amount, service, paymentMethod, invoiceDate, isPaid } =
-    req.body;
-
-  try {
-    const existingInvoice = await Invoice.findById(invoiceId);
-    if (!existingInvoice) {
-      return res
-        .status(404)
-        .send("The invoice with the given ID was not found.");
-    }
-
-    const updatedInvoice = new Invoice(
-      invoiceId,
-      clientName,
-      amount,
-      service,
-      paymentMethod,
-      invoiceDate,
-      isPaid
-    );
-
-    await updatedInvoice.update();
-    res.status(200).send("Invoice updated successfully");
-  } catch (error) {
-    console.error("Failed to update invoice: ", error);
-    res.status(500).send("Failed to update invoice");
-  }
-});
-
-// DELETE
-router.delete("/invoices/:id", authenticateToken, async (req, res) => {
-  const invoiceId = req.params.id;
-  try {
-    await Invoice.deleteById(invoiceId);
-    res.status(200).send("Invoice deleted successfully");
-  } catch (error) {
-    console.error("Failed to delete invoice: ", error);
-    res.status(404).send("Invoice not found");
-  }
-});
+router.post("/addinvoice", authenticateToken, addInvoice); // CREATE
+router.get("/invoices", authenticateToken, getAllInvoices); // RETRIEVE ALL
+router.get("/invoices/:id", authenticateToken, getInvoiceById); // RETRIEVE ONE
+router.put("/invoices/:id", authenticateToken, updateInvoice); // UPDATE
+router.delete("/invoices/:id", authenticateToken, deleteInvoice); // DELETE
 
 module.exports = router;
 

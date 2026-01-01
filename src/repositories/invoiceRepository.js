@@ -1,7 +1,7 @@
 const mongodb = require("mongodb");
-const getDb = require("./database").getDb;
+const getDb = require("../config/database").getDb;
 
-const dbHelpers = {
+const invoiceRepository = {
   createInvoice: (invoice) => {
     const db = getDb();
     return db
@@ -85,4 +85,4 @@ const dbHelpers = {
   },
 };
 
-module.exports = dbHelpers;
+module.exports = invoiceRepository;

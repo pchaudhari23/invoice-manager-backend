@@ -6,15 +6,7 @@ const {
   getInvoiceById,
   updateInvoice,
   deleteInvoice,
-} = require("../controllers/invoiceControllers");
-
-// const {
-//   addInvoice,
-//   getAllInvoices,
-//   getInvoiceById,
-//   updateInvoice,
-//   deleteInvoice,
-// } = require("../controllers-mongoose/invoiceControllers");
+} = require("../controllers/invoiceController");
 
 const router = express.Router();
 

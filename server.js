@@ -1,7 +1,6 @@
 require("dotenv").config();
 const app = require("./app");
-const { connectDB } = require("./src/config/database"); // Native MongoDB
-// const connectDB = require("./src/config/database-mongoose"); // Mongoose
+const { connectDB } = require("./src/config/database"); 
 
 const PORT = process.env.PORT || 8000;
 

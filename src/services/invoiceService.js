@@ -1,35 +1,18 @@
-const Invoice = require("../models/invoice_class");
+const Invoice = require("../models/invoiceModel");
+const invoiceRepository = require("../repositories/invoiceRepository");
 
 class InvoiceService {
   async addInvoice(data) {
-    const {
-      clientName,
-      amount,
-      service,
-      paymentMethod,
-      invoiceDate,
-      isPaid = false,
-    } = data;
-
-    const invoice = new Invoice(
-      null,
-      clientName,
-      amount,
-      service,
-      paymentMethod,
-      invoiceDate,
-      isPaid
-    );
-
-    return invoice.create();
+    const invoice = new Invoice(data);
+    return invoiceRepository.create(invoice);
   }
 
   async getAllInvoices() {
-    return Invoice.fetchAll();
+    return invoiceRepository.findAll();
   }
 
   async getInvoiceById(id) {
-    const invoice = await Invoice.findById(id);
+    const invoice = await invoiceRepository.findById(id);
     if (!invoice) {
       throw new Error("Invoice not found");
     }
@@ -37,36 +20,28 @@ class InvoiceService {
   }
 
   async updateInvoice(id, data) {
-    const existingInvoice = await Invoice.findById(id);
-    if (!existingInvoice) {
+    const existing = await invoiceRepository.findById(id);
+    if (!existing) {
       throw new Error("Invoice not found");
     }
 
-    const updatedInvoice = new Invoice(
-      id,
-      data.clientName,
-      data.amount,
-      data.service,
-      data.paymentMethod,
-      data.invoiceDate,
-      data.isPaid
-    );
-
-    return updatedInvoice.update();
+    const invoice = new Invoice({ id, ...data });
+    return invoiceRepository.update(id, invoice);
   }
 
   async deleteInvoice(id) {
-    const invoice = await Invoice.findById(id);
-
-    if (!invoice) {
+    const existing = await invoiceRepository.findById(id);
+    if (!existing) {
       throw new Error("Invoice not found");
     }
 
-    if (invoice.isPaid) {
+    const invoice = new Invoice({ ...existing, id });
+
+    if (!invoice.canBeDeleted()) {
       throw new Error("Paid invoices cannot be deleted");
     }
 
-    return Invoice.deleteById(id);
+    return invoiceRepository.delete(id);
   }
 }
 

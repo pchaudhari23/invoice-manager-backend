@@ -6,7 +6,7 @@ async function addInvoice(req, res) {
     await invoiceService.addInvoice(req.body);
     res.status(201).send("Invoice added successfully");
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).json({ message: error.message });
   }
 }
 
@@ -16,7 +16,7 @@ async function getAllInvoices(req, res) {
     const invoices = await invoiceService.getAllInvoices();
     res.status(200).json(invoices);
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).json({ message: error.message });
   }
 }
 
@@ -26,7 +26,7 @@ async function getInvoiceById(req, res) {
     const invoice = await invoiceService.getInvoiceById(req.params.id);
     res.status(200).json(invoice);
   } catch (error) {
-    res.status(404).send(error.message);
+    res.status(404).json({ message: error.message });
   }
 }
 
@@ -36,7 +36,7 @@ async function updateInvoice(req, res) {
     await invoiceService.updateInvoice(req.params.id, req.body);
     res.status(200).send("Invoice updated successfully");
   } catch (error) {
-    res.status(404).send(error.message);
+    res.status(404).json({ message: error.message });
   }
 }
 
@@ -46,7 +46,7 @@ async function deleteInvoice(req, res) {
     await invoiceService.deleteInvoice(req.params.id);
     res.status(200).send("Invoice deleted successfully");
   } catch (error) {
-    res.status(400).send(error.message);
+    res.status(400).json({ message: error.message });
   }
 }
 
